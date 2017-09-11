@@ -2,6 +2,7 @@ functor
 import
   Application(exit:Exit)
   System
+  Stack
 define
   \insert List.oz
 
@@ -32,11 +33,17 @@ define
         end
       end
 
+    fun {Interpret Tokens}
+      local
+        Stack = nil
+      in
 
-
+      end
+    end
 
 
   %{System.print {Lex "1 2 + 3 *"}}
-  {System.print {Tokenize ["1" "18" "-" "3" "*"]}}
+  %{System.print {Tokenize ["1" "18" "-" "3" "*"]}}
+  {System.print {Interpret [int(1) int(2) int(2) op('+')]}}
   {Exit 0}
 end
