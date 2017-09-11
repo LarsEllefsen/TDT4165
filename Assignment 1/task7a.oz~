@@ -1,0 +1,7 @@
+local
+   Xs = [1 2 3 4]
+in
+   case Xs of H | T
+   then {Inspect H} {Inspect T}
+   end
+end

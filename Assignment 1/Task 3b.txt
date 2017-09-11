@@ -1,0 +1,3 @@
+Y vil kun ha en verdi til slutt, så det er i grunn det samme når og hvor man printer Y. Dette er på grunn av Lazy Evalution(?), som betyr at når Y printes, uansett hvor
+og når, så vil Y være i sin sluttverdi.
+Dette er kjekt fordi det blant annet kan bli mer effektivt, verdier behøver ikke bli beregnet hvis det ikke kommer til å bli brukt.

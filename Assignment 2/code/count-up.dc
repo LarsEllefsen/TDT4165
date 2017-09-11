@@ -1,0 +1,2 @@
+# ask for input, count up from 1
+? 1 + sb 1 [ p 1 + d lb >r ] d sr x
