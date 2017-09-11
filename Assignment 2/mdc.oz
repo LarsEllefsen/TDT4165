@@ -16,29 +16,27 @@ define
       try
         if Lexeme == "p" orelse Lexeme == "f" then
           Token = cmd({String.toAtom Lexeme})
-        elseif Lexeme == "+" then
-          Token = operator(type:plus)
-        elseif Lexeme == "-" then
-          Token = operator(type:minus)
-        elseif Lexeme == "*" then
-          Token = operator(type:multiply)
-        elseif Lexeme == "/" then
-          Token = operator(type:divide)
+        elseif Lexeme == "+"
+        orelse Lexeme == "-"
+        orelse Lexeme == "*"
+        orelse Lexeme == "/"
+        then
+          Token = op({String.toAtom Lexeme})
         else
-          Token = number({String.toInt Lexeme})
+          Token = int({String.toInt Lexeme})
         end
-      catch _ then
+          catch _ then
         raise tokenizer(lexeme:Lexeme) end
+          end
+          Token|{Tokenize Lexemes}
+        end
       end
-      Token|{Tokenize Lexemes}
-    end
-  end
 
 
 
 
 
   %{System.print {Lex "1 2 + 3 *"}}
-  {System.print {Tokenize ["1" "2" "+" "3" "*"]}}
+  {System.print {Tokenize ["1" "18" "-" "3" "*"]}}
   {Exit 0}
 end
