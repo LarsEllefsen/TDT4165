@@ -64,11 +64,42 @@ define
         end
       end
 
+    fun {ShuntInternal Tokens OperatorStack OutputStack}
+      case Tokens of nil then OutputStack
+      [] int(Integer)|Tokens then
+        {ShuntInternal Tokens OperatorStack Integer|OutputStack}
+      [] op(Operator)|Tokens then
+        {ShuntInternal Tokens Operator|OperatorStack OutputStack}
+      end
+    end
+
+    fun {Precedence Operator}
+      case Operator of op(X) then
+        if X == '+' orelse X == '-' then
+          1
+        else
+          2
+        end
+      end
+    end
+
+    fun {OpLeq Pushing Top}
+      if {Precedence Top} >= {Precedence Pushing} then
+        true
+      else
+        false
+      end
+    end
+
+    fun {Shunt Tokens}
 
 
+
+  {System.print {OpLeq op('*') op('+')}}
+  %{System.print {ShuntInternal [int(1) op('+') int(3)] nil nil}}
   %{System.print {Lex "1 2 3 +"}}
   %{System.print {Tokenize ["1" "2" "3" "^" "i"]}}
   %{System.print {Interpret {Tokenize {Lex "2 3 4 5 6.0 ^"}}}}
-  {System.print {Interpret [int(1) int(2) int(3) cmd('^')]}}
+  %{System.print {Interpret [int(1) int(2) int(3) cmd('^')]}}
   {Exit 0}
 end
