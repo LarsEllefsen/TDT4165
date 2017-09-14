@@ -64,14 +64,30 @@ define
         end
       end
 
+      %Hacky løsning, men fy faen ingenting annet funket!
     fun {ShuntInternal Tokens OperatorStack OutputStack}
-      case Tokens of nil then OutputStack
-      [] int(Integer)|Tokens then
-        {ShuntInternal Tokens OperatorStack Integer|OutputStack}
-      [] op(Operator)|Tokens then
-        {ShuntInternal Tokens Operator|OperatorStack OutputStack}
+      case OperatorStack of Pushing|OldTop|Tail then
+        if {OpLeq Pushing OldTop} == true then
+          %DoSomething
+          {ShuntInternal Tokens Pushing|OldTop OldTop|OutputStack}
+        else
+          case Tokens of nil then {List.flatten {List.reverse OutputStack}|OperatorStack}
+          [] int(Integer)|Tokens then
+            {ShuntInternal Tokens OperatorStack int(Integer)|OutputStack}
+          [] op(Operator)|Tokens then
+            {ShuntInternal Tokens op(Operator)|OperatorStack OutputStack}
+          end
+        end
+      else
+        case Tokens of nil then {List.flatten {List.reverse OutputStack}|OperatorStack}
+        [] int(Integer)|Tokens then
+          {ShuntInternal Tokens OperatorStack int(Integer)|OutputStack}
+        [] op(Operator)|Tokens then
+          {ShuntInternal Tokens op(Operator)|OperatorStack OutputStack}
+        end
       end
     end
+
 
     fun {Precedence Operator}
       case Operator of op(X) then
@@ -91,12 +107,12 @@ define
       end
     end
 
-    fun {Shunt Tokens}
 
 
 
-  {System.print {OpLeq op('*') op('+')}}
-  %{System.print {ShuntInternal [int(1) op('+') int(3)] nil nil}}
+
+  %{System.print {OpLeq op('*') op('+')}}
+  {System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
   %{System.print {Lex "1 2 3 +"}}
   %{System.print {Tokenize ["1" "2" "3" "^" "i"]}}
   %{System.print {Interpret {Tokenize {Lex "2 3 4 5 6.0 ^"}}}}
