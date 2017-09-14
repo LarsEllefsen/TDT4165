@@ -1,5 +1,5 @@
 proc {Interpret Tokens}
-   Commands = cmd(p:proc {$ Top|_} {Browse Top} end 
+   Commands = cmd(p:proc {$ Top|_} {Browse Top} end
 		  f:proc {$ Stack} {ForAll Stack Browse} end)
    Operations = op('+':Number.'+'
 		   '-':Number.'-'
