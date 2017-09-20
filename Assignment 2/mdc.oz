@@ -65,14 +65,55 @@ define
       end
 
       %Hacky løsning, men fy faen ingenting annet funket!
-    fun {ShuntInternal Tokens OperatorStack OutputStack}
-        case Tokens of nil then {List.flatten {List.reverse OutputStack}|{SortOperators OperatorStack}}
-        [] int(Integer)|Tokens then
-          {ShuntInternal Tokens OperatorStack int(Integer)|OutputStack}
-        [] op(Operator)|Tokens then
-          {ShuntInternal Tokens op(Operator)|OperatorStack OutputStack}
-        end
-    end
+      fun {ShuntInternal Tokens OpStack OutStack}
+
+    		% 3d)
+    		case OpStack of Pushed|Top|Tail then
+    			if {OpLeq Pushed Top} then
+    				{ShuntInternal Tokens Pushed|Tail Top|OutStack}
+    			else
+
+    				local NewOutStack NewOpStack NewTail in
+    					case Tokens of Head|Tail then
+
+    						case Head of int(Integer) then
+    							NewOpStack = OpStack
+    							NewOutStack = Head|OutStack
+
+    						[] op(Operator) then
+    								NewOpStack = Head|OpStack
+    								NewOutStack = OutStack
+    						end
+
+    						{ShuntInternal Tail NewOpStack NewOutStack}
+    					else
+    						% 3e)
+    						{Reverse {Append {Reverse OpStack} OutStack}}
+    					end
+    				end
+
+    			end
+    		else
+    			local NewOutStack NewOpStack NewTail in
+    				case Tokens of Head|Tail then
+
+    					case Head of int(Integer) then
+    						NewOpStack = OpStack
+    						NewOutStack = Head|OutStack
+
+    					[] op(Operator) then
+    							NewOpStack = Head|OpStack
+    							NewOutStack = OutStack
+    					end
+
+    					{ShuntInternal Tail NewOpStack NewOutStack}
+    				else
+    					{Reverse {Append {Reverse OpStack} OutStack}}
+    				end
+    			end
+    		end
+    	end
+
 
     fun {SortOperators Tokens}
     {List.reverse {List.sort Tokens OpLeq }}
@@ -103,11 +144,11 @@ define
 
 
   %{System.print {OpLeq op('*') op('+')}}
-  %{System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
+  {System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
   %{System.print {Lex "1 2 3 +"}}
-  %{System.print {Tokenize ["1" "2" "3" "^" "i"]}}
+  %{System.print {Tokenize ["3" "-" "10" "*" "9" "+" "4"]}}
   %{System.print {Interpret {Tokenize {Lex "2 3 4 5 6.0 ^"}}}}
   %{System.print {Interpret [int(1) int(2) int(3) cmd('^')]}}
-  {System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
+  %{System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
   {Exit 0}
 end
