@@ -33,11 +33,9 @@ define
         end
       end
 
-    fun {Interpret Tokens}
-    %Kode her
-      fun {Iterate Stack Tokens}
-        case Tokens of nil then Stack
-        %Check if it is an integer
+  fun {Interpret Tokens}
+    fun {Iterate Stack Tokens}
+      case Tokens of nil then Stack
         [] int(Integer)|Tokens then
           {Iterate Integer|Stack Tokens}
         [] op(Lexeme)|Tokens then
@@ -54,101 +52,95 @@ define
           Top|Rest = Stack in
             {Iterate {Float.'/' 1.0 {IntToFloat Top}}|Rest Tokens}
             %Stack
-        end
       end
-      in
-        try
-          {Iterate nil Tokens}
-        catch _ then
-          raise "stack empty" end
-        end
-      end
-
-      %Hacky løsning, men fy faen ingenting annet funket!
-      fun {ShuntInternal Tokens OpStack OutStack}
-
-    		% 3d)
-    		case OpStack of Pushed|Top|Tail then
-    			if {OpLeq Pushed Top} then
-    				{ShuntInternal Tokens Pushed|Tail Top|OutStack}
-    			else
-
-    				local NewOutStack NewOpStack NewTail in
-    					case Tokens of Head|Tail then
-
-    						case Head of int(Integer) then
-    							NewOpStack = OpStack
-    							NewOutStack = Head|OutStack
-
-    						[] op(Operator) then
-    								NewOpStack = Head|OpStack
-    								NewOutStack = OutStack
-    						end
-
-    						{ShuntInternal Tail NewOpStack NewOutStack}
-    					else
-    						% 3e)
-    						{Reverse {Append {Reverse OpStack} OutStack}}
-    					end
-    				end
-
-    			end
-    		else
-    			local NewOutStack NewOpStack NewTail in
-    				case Tokens of Head|Tail then
-
-    					case Head of int(Integer) then
-    						NewOpStack = OpStack
-    						NewOutStack = Head|OutStack
-
-    					[] op(Operator) then
-    							NewOpStack = Head|OpStack
-    							NewOutStack = OutStack
-    					end
-
-    					{ShuntInternal Tail NewOpStack NewOutStack}
-    				else
-    					{Reverse {Append {Reverse OpStack} OutStack}}
-    				end
-    			end
-    		end
-    	end
-
-
-    fun {SortOperators Tokens}
-    {List.reverse {List.sort Tokens OpLeq }}
+    end
+    in
+      try
+        {Iterate nil Tokens}
+      catch _ then
+        raise "stack empty" end
+    end
   end
 
-    fun {Precedence Operator}
-      case Operator of op(X) then
-        if X == '+' orelse X == '-' then
-          1
-        else
-          2
-        end
-      end
-    end
+  %Hacky løsning, men fy faen ingenting annet funket!
+  fun {ShuntInternal Tokens OpStack OutStack}
+		case OpStack of Pushed|Top|Tail then
+			if {OpLeq Pushed Top} then
+				{ShuntInternal Tokens Pushed|Tail Top|OutStack}
+			else
+				local NewOutStack NewOpStack NewTail in
+					case Tokens of Head|Tail then
 
-    fun {OpLeq Pushing Top}
-      if {Precedence Top} >= {Precedence Pushing} then
-        true
+						case Head of int(Integer) then
+							NewOpStack = OpStack
+							NewOutStack = Head|OutStack
+
+						[] op(Operator) then
+								NewOpStack = Head|OpStack
+								NewOutStack = OutStack
+						end
+						{ShuntInternal Tail NewOpStack NewOutStack}
+					else
+						% 3e)
+						{Reverse {Append {Reverse OpStack} OutStack}}
+					end
+				end
+			end
+		else
+			local NewOutStack NewOpStack NewTail in
+				case Tokens of Head|Tail then
+
+					case Head of int(Integer) then
+						NewOpStack = OpStack
+						NewOutStack = Head|OutStack
+
+					[] op(Operator) then
+							NewOpStack = Head|OpStack
+							NewOutStack = OutStack
+					end
+					{ShuntInternal Tail NewOpStack NewOutStack}
+				else
+					{Reverse {Append {Reverse OpStack} OutStack}}
+				end
+			end
+		end
+	end
+
+
+  fun {SortOperators Tokens}
+  {List.reverse {List.sort Tokens OpLeq }}
+end
+
+  fun {Precedence Operator}
+    case Operator of op(X) then
+      if X == '+' orelse X == '-' then
+        1
       else
-        false
+        2
       end
     end
+  end
 
-    fun {Shunt Tokens}
-      {ShuntInternal Tokens nil nil}
+  fun {OpLeq Pushing Top}
+    if {Precedence Top} >= {Precedence Pushing} then
+      true
+    else
+      false
     end
+  end
+
+  fun {Shunt Tokens}
+    {ShuntInternal Tokens nil nil}
+  end
 
 
 
   %{System.print {OpLeq op('*') op('+')}}
-  {System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
+  %{System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
   %{System.print {Lex "1 2 3 +"}}
   %{System.print {Tokenize ["3" "-" "10" "*" "9" "+" "4"]}}
   %{System.print {Interpret {Tokenize {Lex "2 3 4 5 6.0 ^"}}}}
   %{System.print {Interpret [int(1) int(2) int(3) cmd('^')]}}
-  %{System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
+  {System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
   {Exit 0}
 end
