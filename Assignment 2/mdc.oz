@@ -66,28 +66,17 @@ define
 
       %Hacky løsning, men fy faen ingenting annet funket!
     fun {ShuntInternal Tokens OperatorStack OutputStack}
-      case OperatorStack of Pushing|OldTop|Tail then
-        if {OpLeq Pushing OldTop} == true then
-          %DoSomething
-          {ShuntInternal Tokens Pushing|OldTop OldTop|OutputStack}
-        else
-          case Tokens of nil then {List.flatten {List.reverse OutputStack}|OperatorStack}
-          [] int(Integer)|Tokens then
-            {ShuntInternal Tokens OperatorStack int(Integer)|OutputStack}
-          [] op(Operator)|Tokens then
-            {ShuntInternal Tokens op(Operator)|OperatorStack OutputStack}
-          end
-        end
-      else
-        case Tokens of nil then {List.flatten {List.reverse OutputStack}|OperatorStack}
+        case Tokens of nil then {List.flatten {List.reverse OutputStack}|{SortOperators OperatorStack}}
         [] int(Integer)|Tokens then
           {ShuntInternal Tokens OperatorStack int(Integer)|OutputStack}
         [] op(Operator)|Tokens then
           {ShuntInternal Tokens op(Operator)|OperatorStack OutputStack}
         end
-      end
     end
 
+    fun {SortOperators Tokens}
+    {List.reverse {List.sort Tokens OpLeq }}
+  end
 
     fun {Precedence Operator}
       case Operator of op(X) then
@@ -107,15 +96,18 @@ define
       end
     end
 
-
+    fun {Shunt Tokens}
+      {ShuntInternal Tokens nil nil}
+    end
 
 
 
   %{System.print {OpLeq op('*') op('+')}}
-  {System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
+  %{System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
   %{System.print {Lex "1 2 3 +"}}
   %{System.print {Tokenize ["1" "2" "3" "^" "i"]}}
   %{System.print {Interpret {Tokenize {Lex "2 3 4 5 6.0 ^"}}}}
   %{System.print {Interpret [int(1) int(2) int(3) cmd('^')]}}
+  {System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
   {Exit 0}
 end
