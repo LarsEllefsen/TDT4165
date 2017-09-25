@@ -22,6 +22,10 @@ define
     end
   end
 
+%8A
+local IL = 1|IL in
+  {System.show IL}
+end
 
 
 {Exit 0}
