@@ -54,13 +54,8 @@ define
     end
   end
 
-%8A
-local IL = 1|IL in
-  {System.show IL}
-end
-
 %{System.show {Append [1 2 3] [4 5 6 7]}}
-{System.show {Max 10 5}}
+%{System.show {Max 10 5}}
 
 {Exit 0}
 end
