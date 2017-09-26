@@ -139,8 +139,8 @@ end
   %{System.print {ShuntInternal [int(3) op('-') int(10) op('*') int(9) op('+') int(3)] nil nil}}
   %{System.print {Lex "1 2 3 +"}}
   %{System.print {Tokenize ["3" "-" "10" "*" "9" "+" "4"]}}
-  %{System.print {Interpret {Tokenize {Lex "2 3 4 5 6.0 ^"}}}}
+  {System.print {Interpret {Tokenize {Lex "6 ^"}}}}
   %{System.print {Interpret [int(1) int(2) int(3) cmd('^')]}}
-  {System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
+  %{System.show {Interpret {Shunt {Tokenize {Lex "3 - 10 * 9 + 4"}}}}}
   {Exit 0}
 end
