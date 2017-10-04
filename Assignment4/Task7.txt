@@ -1,0 +1,17 @@
+A) 
+A stream is a list with an unbound tail, so you can append 
+to the stream by binding the tail to a list containing the message 
+and a new unbound tail
+
+B)
+Not sure :(
+Cant find anything?
+
+C)
+This forces us to go through the first 10 elements of the list,
+since Nth returns the Ith element of X (counting from 1).
+Since Lazy Evalution only evalutes once we actually "do" something, we force it to
+"do" something with the 10 first elements.
+
+Thus we get the first 10 elements printed, instead of just _<Optimized>
+
