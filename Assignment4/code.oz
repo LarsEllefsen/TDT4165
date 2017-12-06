@@ -10,8 +10,6 @@ define
 fun lazy {StreamMap S F}
   case S of H|T then
     {F H}|{StreamMap T F}
-  else
-    nil
   end
 end
 
@@ -28,8 +26,6 @@ end
 fun lazy {StreamZip S1 S2 F}
   case S1 of H|T then
     {F H S2.1}|{StreamZip T S2.2 F}
-  else
-    nil
   end
 end
 
